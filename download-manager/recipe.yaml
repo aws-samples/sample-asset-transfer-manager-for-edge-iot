@@ -1,0 +1,51 @@
+---
+RecipeFormatVersion: "2020-01-25"
+ComponentName: "{COMPONENT_NAME}"
+ComponentVersion: "{COMPONENT_VERSION}"
+ComponentDescription: "AWS S3 file download manager with AWS IoT Jobs integration."
+ComponentPublisher: "{COMPONENT_AUTHOR}"
+ComponentConfiguration:
+  DefaultConfiguration:    
+    downloadFolder : "/opt/downloads"
+    accessControl:
+      aws.greengrass.ipc.mqttproxy:
+        "com.example.DownloadManager:mqttproxy:2":
+          policyDescription: Allows access to publish/subscribe to all topics from AWS IoT Cloud
+          operations:
+            - "aws.greengrass#PublishToIoTCore"
+            - "aws.greengrass#SubscribeToIoTCore"
+          resources:
+            - "$aws/things/{iot:thingName}/jobs/#"
+            - "$aws/events/presence/+/{iot:thingName}"
+ComponentDependencies:
+  aws.greengrass.Nucleus:
+    VersionRequirement: "^2.11.x"
+    DependencyType: HARD
+  aws.greengrass.TokenExchangeService:
+    VersionRequirement: "^2.0.x"
+    DependencyType: HARD
+  aws.greengrass.Cli:
+    VersionRequirement: "^2.11.x"
+    DependencyType: SOFT
+  
+Manifests:  
+  - Platform:
+      os: linux
+    Artifacts:
+      - URI: "s3://BUCKET_NAME/COMPONENT_NAME/COMPONENT_VERSION/com.example.DownloadManager.zip"
+        Unarchive: ZIP
+    Lifecycle:
+      Install: 
+        Script: |-
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python3 -m pip install awsiotsdk boto3
+          sudo mkdir -p {configuration:/downloadFolder}
+          sudo chown ggc_user {configuration:/downloadFolder}
+          sudo chmod -R 700 {configuration:/downloadFolder}
+        RequiresPrivilege: 'true'
+      Run: 
+        Script: |-
+          . .venv/bin/activate
+          python3 -u {artifacts:decompressedPath}/com.example.DownloadManager/main.py {configuration:/downloadFolder}
+  
