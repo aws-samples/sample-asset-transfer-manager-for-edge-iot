@@ -8,11 +8,9 @@ You are welcome to follow the upcoming steps in your own AWS account, in the reg
 
 In this post, you will do the initial setup of AWS IoT Core and use the AWS IoT Greengrass, Version 2 (V2) installer to install Greengrass V2 on an EC2 instance  running [Amazon Linux 2023](https://docs.aws.amazon.com/linux/al2023/release-notes/relnotes.html), emulating edge gateway.
 
-Follow [this tutorial](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html) on creating and connecting to your EC2 instance.
+Follow the steps in the [Visual Studio Code on EC2 for Prototyping repository](https://github.com/aws-samples/vscode-on-ec2-for-prototyping/blob/main/README.md) to deploy an EC2 instance. Use the browser-based VS Code IDE to edit files and execute the instructions.
 
-We recommend using [AWS System Manager Session Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html) to connect to your EC2 instance. Session Manager is a fully managed AWS Systems Manager capability that lets you manage your Amazon EC2 instances through an interactive one-click browser-based shell or through the AWS CLI. You can use Session Manager to start a session with an instance in your account. After the session is started, you can run bash commands as you would through any other connection type.
-
-Follow [this guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/session-manager-to-linux.html) to Connect to your Linux instance with AWS Systems Manager Session Manager.
+The EC2 instance is created with an IAM Role that grants unrestricted access to all AWS resources. It is recommended that you review the role attached to the EC2 instance and modify it to limit permissions to SSM, S3, IoT Core and IoT Greengrass.
 
 ## AWS IoT GreenGrass Core Device Setup
 
@@ -25,6 +23,8 @@ java -jar ./GreengrassInstaller/lib/Greengrass.jar --version
 ```
 
 2. Create the Greengrass Core Device
+
+Replace ```REGION``` with your region e.g.```us-west-2```
 
 ```
 sudo -E java -Droot="/greengrass/v2" -Dlog.store=FILE \
@@ -47,7 +47,7 @@ python3 -m pip install -U git+https://github.com/aws-greengrass/aws-greengrass-g
 export PATH=$PATH:/home/ec2-user/.local/bin
 ```
 
-## Building and Deploying the Component
+## Build and Publish the Component
 
 1. Clone the repository
 
@@ -58,7 +58,7 @@ cd download-manager
 
 2. Update the configuration file
 
-Edit ```gdk-config.json``` and replace REGION with your AWS region
+Edit ```gdk-config.json``` and replace ```us-west-2``` with your AWS region. Replace ```1.3.0``` with the version of the GDK CLI you installed.
 
 3. Build and publish the component
 
@@ -67,7 +67,7 @@ gdk component build
 gdk component publish
 ```
 
-4. Deploy the Component
+## Deploy the Component
 
 Navigate to AWS IoT Core Console → Greengrass Devices → Components and create a new deployment to your core device using the DownloadManager component
 
