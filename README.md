@@ -107,9 +107,12 @@ cd /opt/downloads/images
 
 ## Authors and acknowledgment
 
+Tamil Jayakumar, Senior Solutions Architect @TamilCodes4AWS
+
 Nilo Bustani , Senior Solutions Architect
+
 Rashmi Varshney , Senior Solutions Architect
-Tamil Jayakumar, Senior Solutions Architect
+
 
 ## License
 
